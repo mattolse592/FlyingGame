@@ -26,19 +26,19 @@ namespace FlyingGame
         {
             if (direction == "up")
             {
-                ySpeed -= 0.1;
+                ySpeed -= 0.5 * GameScreen.speedMultiplier;
             }
             else if (direction == "down")
             {
-                ySpeed += 0.1;
+                ySpeed += 0.5 * GameScreen.speedMultiplier;
             }
             else if (direction == "left")
             {
-                xSpeed -= 0.1;
+                xSpeed -= 0.5 * GameScreen.speedMultiplier;
             }
             else
             {
-                xSpeed += 0.1;
+                xSpeed += 0.5 * GameScreen.speedMultiplier;
             }
         }
 

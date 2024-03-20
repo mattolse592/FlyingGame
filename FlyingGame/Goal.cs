@@ -43,7 +43,8 @@ namespace FlyingGame
                     {
                         x += 2.4 * xSpeed;
                         y -= 3;
-                    } else if (size >= 523)
+                    }
+                    else if (size >= 523)
                     {
                         color = "green";
                         size = 523;
@@ -51,22 +52,28 @@ namespace FlyingGame
 
                     break;
                 case 3:
-                    x += 4.1;
-                    y += 3;
-
-                    if (x < 100)
+                    if (size < 523)
                     {
-                        x = 100;
-                        y = 77;
+                        x += 2.4 * xSpeed;
+                        y += 0.8;
+                    }
+                    else if (size >= 523)
+                    {
                         color = "green";
                         size = 523;
                     }
                     break;
                 case 4:
-                    x -= 4.1;
-                    y += 3;
-
-
+                    if (size < 523)
+                    {
+                        x -= 4.1 * xSpeed;
+                        y += 0.8;
+                    }
+                    else if (size >= 523)
+                    {
+                        color = "green";
+                        size = 523;
+                    }
                     break;
             }
 

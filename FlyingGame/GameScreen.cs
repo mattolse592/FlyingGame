@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace FlyingGame
 {
@@ -22,15 +23,21 @@ namespace FlyingGame
         SolidBrush greenBrush = new SolidBrush(Color.LimeGreen);
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush darkGreenBrush = new SolidBrush(Color.Green);
-
         Pen whitePen = new Pen(Color.White, 1);
         Pen greenPen = new Pen(Color.Green, 5);
+
         Rectangle centerRec;
 
+        public static int width, height, score;
+        public static int speedMultiplier = 1;
 
+        Stopwatch gameWatch = new Stopwatch();
 
-        public static int width, height;
+        int boost = 400;
+
+        float timeLeft;
         bool wKeyDown, aKeyDown, sKeyDown, dKeyDown;
+
         public GameScreen()
         {
             InitializeComponent();
@@ -43,11 +50,15 @@ namespace FlyingGame
                 AddStar();
             }
 
-            hero = new Player(this.Width / 2, this.Height / 2, 140);
-            goal = new Goal(2);
+            hero = new Player(randGen.Next(20, 1900), randGen.Next(20, 1050), 140);
+            goal = new Goal(randGen.Next(1, 5));
 
+            gameWatch.Start();
             Refresh();
         }
+
+
+
         private void AddStar()
         {
             int x = randGen.Next(width / 2 - 50, width / 2 + 50);
@@ -84,6 +95,9 @@ namespace FlyingGame
                 case Keys.D:
                     dKeyDown = true;
                     break;
+                case Keys.Space:
+                    speedMultiplier = 4;
+                    break;
             }
         }
         private void GameScreen_KeyUp(object sender, KeyEventArgs e)
@@ -101,6 +115,9 @@ namespace FlyingGame
                     break;
                 case Keys.D:
                     dKeyDown = false;
+                    break;
+                case Keys.Space:
+                    speedMultiplier = 1;
                     break;
             }
         }
@@ -151,26 +168,56 @@ namespace FlyingGame
                 hero.Accelerate("right");
             }
             #endregion
+
             hero.Move();
             goal.Move();
 
-            xLabel.Text = $"x: {goal.x}";
-            yLabel.Text = $"y: {goal.y}";
-            sizeLabel.Text = $"size: {goal.size}";
-                
-            if (goal.color == "green")
+            if (speedMultiplier > 1)
             {
-                if (hero.Collision(goal))
+                if (boost > 3)
                 {
-                    goal = new Goal(randGen.Next(2, 3));
+                    boost -= 4;
                 }
+            } else
+            {
+                if (boost < 400)
+                {
+                    boost++;
+                }
+            }
+
+            //respawn goal
+            if (hero.Collision(goal))
+            {
+                if (goal.color == "green")
+                {
+                    score++;
+                }
+                else
+                {
+                    score--;
+                }
+                goal = new Goal(randGen.Next(1, 5));
+                scoreLabel.Text = $"Score: {score}";
             }
 
             Refresh();
         }
+        private void countdownTimer_Tick(object sender, EventArgs e)
+        {
+            timeLeft = 60000 - gameWatch.ElapsedMilliseconds;
 
+            var testVar = 60000 - gameWatch.ElapsedMilliseconds;
+            timerLabel.Text = (testVar).ToString(@"s\.fff");
 
-
+            if (timeLeft <= 0)
+            {
+                gameTimer.Enabled = false;
+                countdownTimer.Enabled = false;
+                timerLabel.Text = "0";
+               // Form1.ChangeScreen(this, new)
+            }
+        }
         private void GameScreen_Paint(object sender, PaintEventArgs e)
         {
             foreach (Star s in stars)
@@ -190,13 +237,13 @@ namespace FlyingGame
                     e.Graphics.DrawRectangle(greenPen, 100, 77, 525, 525);
                     break;
                 case 2:
-                    e.Graphics.DrawRectangle(greenPen, 1341, 75, 525, 525);
+                    e.Graphics.DrawRectangle(greenPen, 1357, 68, 525, 525);
                     break;
                 case 3:
-
+                    e.Graphics.DrawRectangle(greenPen, 1357, 653, 525, 525);
                     break;
                 case 4:
-
+                    e.Graphics.DrawRectangle(greenPen, 91, 653, 525, 525);
                     break;
             }
             #endregion
@@ -204,14 +251,15 @@ namespace FlyingGame
             if (goal.color == "red")
             {
                 e.Graphics.FillRectangle(redBrush, Convert.ToInt16(goal.x), Convert.ToInt16(goal.y), Convert.ToInt16(goal.size), Convert.ToInt16(goal.size));
-            } else
+            }
+            else
             {
                 e.Graphics.FillRectangle(darkGreenBrush, Convert.ToInt16(goal.x), Convert.ToInt16(goal.y), Convert.ToInt16(goal.size), Convert.ToInt16(goal.size));
             }
 
 
+            e.Graphics.FillRectangle(whiteBrush, 100, 500 - boost, 40, boost);
             e.Graphics.FillRectangle(greenBrush, Convert.ToInt16(hero.x), Convert.ToInt16(hero.y), hero.width, hero.width);
-
         }
     }
 }
