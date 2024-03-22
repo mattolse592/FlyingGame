@@ -1,4 +1,9 @@
-﻿using System;
+﻿//Matthew Olsen
+//Feb 21 2024
+//Basic space game
+//class practice
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;

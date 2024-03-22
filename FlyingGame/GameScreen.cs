@@ -22,6 +22,7 @@ namespace FlyingGame
         SolidBrush whiteBrush = new SolidBrush(Color.White);
         SolidBrush greenBrush = new SolidBrush(Color.LimeGreen);
         SolidBrush redBrush = new SolidBrush(Color.Red);
+        SolidBrush orangeBrush = new SolidBrush(Color.Orange);
         SolidBrush darkGreenBrush = new SolidBrush(Color.Green);
         Pen whitePen = new Pen(Color.White, 1);
         Pen greenPen = new Pen(Color.Green, 5);
@@ -30,10 +31,14 @@ namespace FlyingGame
 
         public static int width, height, score;
         public static int speedMultiplier = 1;
+        public static int time = 60;
+
+        public static bool crash;
 
         Stopwatch gameWatch = new Stopwatch();
 
         int boost = 400;
+        int moveDisabledTime = 0;
 
         float timeLeft;
         bool wKeyDown, aKeyDown, sKeyDown, dKeyDown;
@@ -45,6 +50,8 @@ namespace FlyingGame
             width = this.Width;
             height = this.Height;
 
+            score = 0;
+
             for (int i = 0; i < 100; i++)
             {
                 AddStar();
@@ -53,12 +60,14 @@ namespace FlyingGame
             hero = new Player(randGen.Next(20, 1900), randGen.Next(20, 1050), 140);
             goal = new Goal(randGen.Next(1, 5));
 
+            while (hero.Collision(goal))
+            {
+                hero = new Player(randGen.Next(20, 1900), randGen.Next(20, 1050), 140);
+            }
+
             gameWatch.Start();
             Refresh();
         }
-
-
-
         private void AddStar()
         {
             int x = randGen.Next(width / 2 - 50, width / 2 + 50);
@@ -96,7 +105,10 @@ namespace FlyingGame
                     dKeyDown = true;
                     break;
                 case Keys.Space:
-                    speedMultiplier = 4;
+                    if (moveDisabledTime == 0)
+                    {
+                        speedMultiplier = 4;
+                    }
                     break;
             }
         }
@@ -123,6 +135,7 @@ namespace FlyingGame
         }
         private void gameTimer_Tick(object sender, EventArgs e)
         {
+            //move stars
             foreach (Star s in stars)
             {
                 s.Move();
@@ -169,22 +182,52 @@ namespace FlyingGame
             }
             #endregion
 
-            hero.Move();
+
+            if (moveDisabledTime > 0)
+            {
+                moveDisabledTime--;
+            }
+            else if (moveDisabledTime == 0)
+            {
+                hero.Move();
+            }
+
             goal.Move();
 
-            if (speedMultiplier > 1)
+            xspeedLabel.Text = "";//hero.xSpeed.ToString("00");
+            ySpeedLabel.Text = "";//hero.ySpeed.ToString("00");
+            #region boost code
+            if (speedMultiplier > 1 && boost > 3)
             {
-                if (boost > 3)
-                {
-                    boost -= 4;
-                }
-            } else
-            {
-                if (boost < 400)
-                {
-                    boost++;
-                }
+                boost -= 4;
             }
+            else if (boost < 400)
+            {
+                boost++;
+            }
+
+            if (boost <= 3)
+            {
+                speedMultiplier = 1;
+            }
+            #endregion
+
+            #region crash code
+            if (crash == true)
+            {
+                //crashPlayer.Play();
+
+                crash = false;
+                hero = new Player(randGen.Next(20, 1800), randGen.Next(20, 1050), 140);
+
+                while (hero.Collision(goal))
+                {
+                    hero = new Player(randGen.Next(20, 1800), randGen.Next(20, 1050), 140);
+                }
+
+                moveDisabledTime = 100;
+            }
+            #endregion
 
             //respawn goal
             if (hero.Collision(goal))
@@ -205,17 +248,17 @@ namespace FlyingGame
         }
         private void countdownTimer_Tick(object sender, EventArgs e)
         {
-            timeLeft = 60000 - gameWatch.ElapsedMilliseconds;
+            timeLeft = time * 1000 - gameWatch.ElapsedMilliseconds;
 
-            var testVar = 60000 - gameWatch.ElapsedMilliseconds;
-            timerLabel.Text = (testVar).ToString(@"s\.fff");
+            var testVar = time * 1000 - gameWatch.ElapsedMilliseconds;
+            timerLabel.Text = Convert.ToString(testVar);
 
             if (timeLeft <= 0)
             {
                 gameTimer.Enabled = false;
                 countdownTimer.Enabled = false;
-                timerLabel.Text = "0";
-               // Form1.ChangeScreen(this, new)
+
+                Form1.ChangeScreen(this, new GameOverScreen());
             }
         }
         private void GameScreen_Paint(object sender, PaintEventArgs e)
@@ -226,6 +269,7 @@ namespace FlyingGame
             }
             #region draw guideLines
             e.Graphics.DrawRectangle(whitePen, width / 2 - 70, height / 2 - 70, 140, 140);
+            e.Graphics.DrawRectangle(whitePen, 0, 0, width - 1, height - 1);
             e.Graphics.DrawLine(whitePen, width / 2 - 70, height / 2 - 70, 0, 0);
             e.Graphics.DrawLine(whitePen, width / 2 + 70, height / 2 - 70, width, 0);
             e.Graphics.DrawLine(whitePen, width / 2 - 70, height / 2 + 70, 0, height);
@@ -257,9 +301,19 @@ namespace FlyingGame
                 e.Graphics.FillRectangle(darkGreenBrush, Convert.ToInt16(goal.x), Convert.ToInt16(goal.y), Convert.ToInt16(goal.size), Convert.ToInt16(goal.size));
             }
 
+            //draw boost
+            e.Graphics.FillRectangle(whiteBrush, 10, 500 - boost, 40, boost);
+            e.Graphics.DrawRectangle(whitePen, 10, 100, 40, 400);
 
-            e.Graphics.FillRectangle(whiteBrush, 100, 500 - boost, 40, boost);
-            e.Graphics.FillRectangle(greenBrush, Convert.ToInt16(hero.x), Convert.ToInt16(hero.y), hero.width, hero.width);
+            if (moveDisabledTime > 0)
+            {
+                e.Graphics.FillRectangle(orangeBrush, Convert.ToInt16(hero.x), Convert.ToInt16(hero.y), hero.width, hero.width);
+            }
+            else
+            {
+                e.Graphics.FillRectangle(greenBrush, Convert.ToInt16(hero.x), Convert.ToInt16(hero.y), hero.width, hero.width);
+            }
+
         }
     }
 }

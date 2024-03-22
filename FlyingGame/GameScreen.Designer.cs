@@ -33,6 +33,8 @@
             this.scoreLabel = new System.Windows.Forms.Label();
             this.countdownTimer = new System.Windows.Forms.Timer(this.components);
             this.timerLabel = new System.Windows.Forms.Label();
+            this.xspeedLabel = new System.Windows.Forms.Label();
+            this.ySpeedLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // gameTimer
@@ -71,11 +73,37 @@
             this.timerLabel.TabIndex = 4;
             this.timerLabel.Text = "Score: 0";
             // 
+            // xspeedLabel
+            // 
+            this.xspeedLabel.AutoSize = true;
+            this.xspeedLabel.BackColor = System.Drawing.Color.Transparent;
+            this.xspeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.xspeedLabel.ForeColor = System.Drawing.Color.White;
+            this.xspeedLabel.Location = new System.Drawing.Point(127, 40);
+            this.xspeedLabel.Name = "xspeedLabel";
+            this.xspeedLabel.Size = new System.Drawing.Size(92, 25);
+            this.xspeedLabel.TabIndex = 5;
+            this.xspeedLabel.Text = "Score: 0";
+            // 
+            // ySpeedLabel
+            // 
+            this.ySpeedLabel.AutoSize = true;
+            this.ySpeedLabel.BackColor = System.Drawing.Color.Transparent;
+            this.ySpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ySpeedLabel.ForeColor = System.Drawing.Color.White;
+            this.ySpeedLabel.Location = new System.Drawing.Point(127, 77);
+            this.ySpeedLabel.Name = "ySpeedLabel";
+            this.ySpeedLabel.Size = new System.Drawing.Size(92, 25);
+            this.ySpeedLabel.TabIndex = 6;
+            this.ySpeedLabel.Text = "Score: 0";
+            // 
             // GameScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
+            this.Controls.Add(this.ySpeedLabel);
+            this.Controls.Add(this.xspeedLabel);
             this.Controls.Add(this.timerLabel);
             this.Controls.Add(this.scoreLabel);
             this.DoubleBuffered = true;
@@ -95,5 +123,7 @@
         private System.Windows.Forms.Label scoreLabel;
         private System.Windows.Forms.Timer countdownTimer;
         private System.Windows.Forms.Label timerLabel;
+        private System.Windows.Forms.Label xspeedLabel;
+        private System.Windows.Forms.Label ySpeedLabel;
     }
 }

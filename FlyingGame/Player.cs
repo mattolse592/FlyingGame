@@ -12,8 +12,8 @@ namespace FlyingGame
         public double x, y;
         public int width;
 
-        double xSpeed;
-        double ySpeed;
+        public double xSpeed;
+        public double ySpeed;
 
         public Player(double x, double y, int width)
         {
@@ -26,19 +26,19 @@ namespace FlyingGame
         {
             if (direction == "up")
             {
-                ySpeed -= 0.5 * GameScreen.speedMultiplier;
+                ySpeed -= 0.1 * GameScreen.speedMultiplier;
             }
             else if (direction == "down")
             {
-                ySpeed += 0.5 * GameScreen.speedMultiplier;
+                ySpeed += 0.1 * GameScreen.speedMultiplier;
             }
             else if (direction == "left")
             {
-                xSpeed -= 0.5 * GameScreen.speedMultiplier;
+                xSpeed -= 0.1 * GameScreen.speedMultiplier;
             }
             else
             {
-                xSpeed += 0.5 * GameScreen.speedMultiplier;
+                xSpeed += 0.1 * GameScreen.speedMultiplier;
             }
         }
 
@@ -49,21 +49,42 @@ namespace FlyingGame
 
             if (y < 0)
             {
+                if (ySpeed < -3)
+                {
+                    GameScreen.crash = true;
+                }
+
                 ySpeed = 0;
                 y = 0;
             }
             else if (y > GameScreen.height - width)
             {
+                if (ySpeed > 3)
+                {
+                    GameScreen.crash = true;
+                }
+
                 ySpeed = 0;
                 y = GameScreen.height - width;
             }
+
             if (x < 0)
             {
+                if (xSpeed < -3)
+                {
+                    GameScreen.crash = true;
+                }
+
                 xSpeed = 0;
                 x = 0;
             }
             else if (x > GameScreen.width - width)
             {
+                if (xSpeed > 3)
+                {
+                    GameScreen.crash = true;
+                }
+
                 xSpeed = 0;
                 x = GameScreen.width - width;
             }
@@ -80,5 +101,6 @@ namespace FlyingGame
             }
             return false;
         }
+
     }
 }
