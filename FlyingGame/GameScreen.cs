@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Media;
 
 namespace FlyingGame
 {
@@ -19,6 +20,8 @@ namespace FlyingGame
 
         Random randGen = new Random();
 
+        Stopwatch gameWatch = new Stopwatch();
+
         SolidBrush whiteBrush = new SolidBrush(Color.White);
         SolidBrush greenBrush = new SolidBrush(Color.LimeGreen);
         SolidBrush redBrush = new SolidBrush(Color.Red);
@@ -27,6 +30,10 @@ namespace FlyingGame
         Pen whitePen = new Pen(Color.White, 1);
         Pen greenPen = new Pen(Color.Green, 5);
 
+        SoundPlayer crashPlayer = new SoundPlayer(Properties.Resources.crash);
+        SoundPlayer wrongPlayer = new SoundPlayer(Properties.Resources.wrong);
+        SoundPlayer scorePlayer = new SoundPlayer(Properties.Resources.score);
+
         Rectangle centerRec;
 
         public static int width, height, score;
@@ -34,8 +41,6 @@ namespace FlyingGame
         public static int time = 60;
 
         public static bool crash;
-
-        Stopwatch gameWatch = new Stopwatch();
 
         int boost = 400;
         int moveDisabledTime = 0;
@@ -52,6 +57,8 @@ namespace FlyingGame
 
             score = 0;
 
+            //add stars
+            centerRec = new Rectangle(width / 2 - 70, height / 2 - 70, 140, 140);
             for (int i = 0; i < 100; i++)
             {
                 AddStar();
@@ -70,12 +77,11 @@ namespace FlyingGame
         }
         private void AddStar()
         {
-            int x = randGen.Next(width / 2 - 50, width / 2 + 50);
-            int y = randGen.Next(height / 2 - 50, height / 2 + 50);
+            int x = randGen.Next(width / 2 - 150, width / 2 + 150);
+            int y = randGen.Next(height / 2 - 150, height / 2 + 150);
 
             Rectangle starRec = new Rectangle(x, y, 10, 10);
-            centerRec = new Rectangle(width / 2 - 70, height / 2 - 70, 140, 140);
-
+            
             while (starRec.IntersectsWith(centerRec))
             {
                 x = randGen.Next(width / 2 - 150, width / 2 + 150);
@@ -182,7 +188,6 @@ namespace FlyingGame
             }
             #endregion
 
-
             if (moveDisabledTime > 0)
             {
                 moveDisabledTime--;
@@ -196,6 +201,7 @@ namespace FlyingGame
 
             xspeedLabel.Text = "";//hero.xSpeed.ToString("00");
             ySpeedLabel.Text = "";//hero.ySpeed.ToString("00");
+
             #region boost code
             if (speedMultiplier > 1 && boost > 3)
             {
@@ -215,7 +221,7 @@ namespace FlyingGame
             #region crash code
             if (crash == true)
             {
-                //crashPlayer.Play();
+                crashPlayer.Play();
 
                 crash = false;
                 hero = new Player(randGen.Next(20, 1800), randGen.Next(20, 1050), 140);
@@ -234,10 +240,12 @@ namespace FlyingGame
             {
                 if (goal.color == "green")
                 {
+                    scorePlayer.Play();
                     score++;
                 }
                 else
                 {
+                    wrongPlayer.Play();
                     score--;
                 }
                 goal = new Goal(randGen.Next(1, 5));
@@ -305,6 +313,7 @@ namespace FlyingGame
             e.Graphics.FillRectangle(whiteBrush, 10, 500 - boost, 40, boost);
             e.Graphics.DrawRectangle(whitePen, 10, 100, 40, 400);
 
+            //draw player
             if (moveDisabledTime > 0)
             {
                 e.Graphics.FillRectangle(orangeBrush, Convert.ToInt16(hero.x), Convert.ToInt16(hero.y), hero.width, hero.width);
@@ -313,7 +322,6 @@ namespace FlyingGame
             {
                 e.Graphics.FillRectangle(greenBrush, Convert.ToInt16(hero.x), Convert.ToInt16(hero.y), hero.width, hero.width);
             }
-
         }
     }
 }
