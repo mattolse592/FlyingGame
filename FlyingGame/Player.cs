@@ -22,6 +22,7 @@ namespace FlyingGame
             this.width = width;
         }
 
+        //accelerate the player in the direction of the key pressed
         public void Accelerate(string direction)
         {
             if (direction == "up")
@@ -42,6 +43,7 @@ namespace FlyingGame
             }
         }
 
+        //ever frame, move the player as far as the speed.
         public void Move()
         {
             y += ySpeed;
@@ -49,6 +51,7 @@ namespace FlyingGame
 
             if (y < 0)
             {
+                //if player hits the wall too fast, player crashes
                 if (ySpeed < -3)
                 {
                     GameScreen.crash = true;
@@ -90,6 +93,7 @@ namespace FlyingGame
             }
         }
 
+        //check if collides with goal
         public bool Collision(Goal goal)
         {
             Rectangle playerRec = new Rectangle(Convert.ToInt16(x), Convert.ToInt16(y), width, width);

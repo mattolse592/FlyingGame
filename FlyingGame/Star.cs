@@ -20,6 +20,7 @@ namespace FlyingGame
         public double yDistanceFromCenter;
         public double distance;
 
+        //create the star
         public Star(int x, int y, double distance)
         {
             this.x = x;
@@ -32,6 +33,7 @@ namespace FlyingGame
             SetPoints();
         }
 
+
         private void SetPoints()
         {
             starPoints = new PointF[4];
@@ -40,7 +42,7 @@ namespace FlyingGame
             starPoints[2] = new PointF(20 + x, 20 + y);
             starPoints[3] = new PointF(0 + x, 20 + y);
         }
-
+        //moves the star in a straight line towards the edges
         public void Move()
         {
             distance += 0.1;

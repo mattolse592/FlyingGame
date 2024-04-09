@@ -22,6 +22,7 @@ namespace FlyingGame
             this.type = type;
         }
 
+        //move the goals towards the end area
         public void Move()
         {
             switch (type)
@@ -77,6 +78,7 @@ namespace FlyingGame
                     break;
             }
 
+            //grow and speed up to give the effect that the goal is getting closer
             size += 2.5;
             xSpeed += 0.01;
         }

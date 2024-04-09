@@ -75,6 +75,8 @@ namespace FlyingGame
             gameWatch.Start();
             Refresh();
         }
+        
+        //adds a star in a random location in the center
         private void AddStar()
         {
             int x = randGen.Next(width / 2 - 150, width / 2 + 150);
